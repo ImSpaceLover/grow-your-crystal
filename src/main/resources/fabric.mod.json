@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "growyourcrystal",
+	"version": "${version}",
+	"name": "${modName}",
+	"description": "${modDescription}",
+	"authors": [
+		"${authors}"
+	],
+	"contributors": [
+		"${contributors}"
+	],
+	"contact": {
+		"homepage": "${homepage}",
+		"issues": "${issues}",
+		"sources": "${sources}"
+	},
+	"license": "${license}",
+	"icon": "assets/grow_your_crystal/icon.png",
+	"mixins": [
+		"grow_your_crystal.mixins.json"
+	],
+	"depends": {
+		"minecraft": ">=${mc}",
+		"fabricloader": ">=${fl}",
+		"fabric-api": ">=${fapi}"
+	},
+	"suggests": {
+	},
+	"entrypoints": {
+		"main": [
+			"io.github.imspacelover.growyourcrystal.GrowYourCrystal"
+		],
+		"client": [
+		]
+	}
+}
