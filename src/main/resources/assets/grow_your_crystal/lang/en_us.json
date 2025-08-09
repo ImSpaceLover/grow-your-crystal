@@ -1,0 +1,11 @@
+{
+	"itemGroup.growyourcrystal.growYourCrystal": "Grow Your Crystal",
+	"item.growyourcrystal.growYourCrystalToolkit": "Chemistry Toolkit",
+
+	"item.growyourcrystal.crystallineSolution": "Crystalline Solution",
+	"item.growyourcrystal.crystallineSolution.color": "Color: %1$s",
+	"item.tooltip.growyourcrystal.crystallineSolution.features": "Features: %1$s",
+	"item.tooltip.growyourcrystal.crystallineSolution.glowing": "glowing",
+	"item.tooltip.growyourcrystal.crystallineSolution.redstoneEmitter": "emits redstone signal",
+	"item.tooltip.growyourcrystal.crystallineSolution.edible": "edible"
+}

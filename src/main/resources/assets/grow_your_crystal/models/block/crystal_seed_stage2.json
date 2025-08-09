@@ -1,0 +1,23 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "grow_your_crystal:block/crystal_seed",
+		"particle": "grow_your_crystal:block/crystal_seed"
+	},
+	"elements": [
+		{
+			"from": [2, 2, 2],
+			"to": [14, 14, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+			"faces": {
+				"north": {"uv": [2, 2, 14, 14], "texture": "#0", "tintindex": 0},
+				"east": {"uv": [2, 2, 14, 14], "texture": "#0", "tintindex": 0},
+				"south": {"uv": [2, 2, 14, 14], "texture": "#0", "tintindex": 0},
+				"west": {"uv": [2, 2, 14, 14], "texture": "#0", "tintindex": 0},
+				"up": {"uv": [2, 2, 14, 14], "texture": "#0", "tintindex": 0},
+				"down": {"uv": [2, 2, 14, 14], "texture": "#0", "tintindex": 0}
+			}
+		}
+	]
+}
