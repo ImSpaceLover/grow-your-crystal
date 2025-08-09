@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 public class ModBlocks {
 
-	public static final Block CRYSTAL_SEED_BLOCK = register("crystal_seed", CrystalSeedBlock::new, AbstractBlock.Settings.create().ticksRandomly(), true);
+	public static final Block CRYSTAL_SEED_BLOCK = register("crystal_seed", CrystalSeedBlock::new, AbstractBlock.Settings.create().nonOpaque().ticksRandomly(), true);
 
 	private static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, boolean shouldRegisterItem) {
 

@@ -14,19 +14,23 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class CrystalSeedBlockEntity extends BlockEntity {
 	public static final int MAX_LAYERS = 3;
+	public static final int DEFAULT_COLOR = DyeColor.WHITE.getEntityColor();
 
-
+	public boolean growing = false;
 	public int lightLevel = 0;
 	public int redstoneStrength = 0;
 	public int foodValue = 0;
 
-	public int[] layerColors = {0xFF000000, 0xFF000000, 0xFF000000};
+
+	public int[] layerColors = {DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR};
 
 	public CrystalSeedBlockEntity(BlockPos pos, BlockState state) {
 		super(ModBlockEntities.CRYSTAL_SEED, pos, state);
@@ -36,7 +40,14 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 		ItemStack stack = itemEntity.getStack();
 		CrystallineSolutionComponent component = stack.get(ModComponents.CRYSTALLINE_SOLUTION_COMPONENT);
 
-		layerColors[layer] = component.color().getEntityColor();
+//		// black color is too dark and hides the
+		if (component.color() != DyeColor.BLACK) {
+			layerColors[layer] = component.color().getEntityColor();
+		}
+		else {
+			layerColors[layer] = ColorHelper.withBrightness(component.color().getEntityColor(), 0.2f);
+		}
+
 		if (component.glowing()) {
 			lightLevel += 5;
 		}
@@ -46,6 +57,8 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 		if (component.edible()) {
 			foodValue += 1;
 		}
+
+		this.growing = true;
 		markDirty(world, pos, state);
 	}
 
@@ -57,6 +70,7 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 		view.putInt("lightLevel", lightLevel);
 		view.putInt("redstoneStrength", lightLevel);
 		view.putInt("foodValue", foodValue);
+		view.putBoolean("growing", growing);
 	}
 
 	@Override
@@ -70,6 +84,7 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 		view.getInt("lightLevel", lightLevel);
 		view.getInt("redstoneStrength", redstoneStrength);
 		view.getInt("foodValue", foodValue);
+		view.getBoolean("growing", growing);
 
 		if (world != null) {
 			world.updateListeners(pos, getCachedState(), getCachedState(), 0);

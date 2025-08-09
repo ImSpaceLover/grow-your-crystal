@@ -12,11 +12,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCollisionHandler;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -28,6 +34,7 @@ import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Position;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
@@ -35,18 +42,20 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.event.GameEvent;
+import net.minecraft.world.explosion.AdvancedExplosionBehavior;
+import net.minecraft.world.explosion.ExplosionBehavior;
 import net.minecraft.world.tick.ScheduledTickView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class CrystalSeedBlock extends Block implements BlockEntityProvider, Waterloggable {
 
 	public static final IntProperty AGE = Properties.AGE_3;
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-
-	public static final int GROWTH_TICKS = 8000;
+	public static final int GROWTH_TICKS = 80;
 
 	public final Map<Integer, VoxelShape> SHAPES = Map.of(
 		AGE.getValues().get(0), Block.createCubeShape(4),
@@ -95,14 +104,39 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 			&& itemEntity.getStack().contains(ModComponents.CRYSTALLINE_SOLUTION_COMPONENT)
 			&& !world.isClient()
 			&& state.get(AGE) != 3
-			&& (Boolean) state.get(WATERLOGGED)) {
+			&& state.get(WATERLOGGED)
+			&& !crystalSeedBlockEntity.growing) {
 				progressGrowth(state, world, pos, crystalSeedBlockEntity, itemEntity, handler);
 			}
 		super.onEntityCollision(state, world, pos, entity, handler);
 	}
 
+	@Override
+	protected boolean hasSidedTransparency(BlockState state) {
+		return super.hasSidedTransparency(state);
+	}
+
 	private void progressGrowth(BlockState state, World world, BlockPos pos, CrystalSeedBlockEntity blockEntity, ItemEntity itemEntity, EntityCollisionHandler handler) {
 		blockEntity.addCrystallineSolution(world, pos, state, itemEntity, state.get(AGE));
+
+		world.playSound(null, pos, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+		Position itemPos = itemEntity.getPos();
+
+		world.createExplosion(null,
+			null,
+			new AdvancedExplosionBehavior(false, false, Optional.of(0.0F),
+			Registries.BLOCK.getOptional(BlockTags.BLOCKS_WIND_CHARGE_EXPLOSIONS).map(Function.identity())),
+			itemPos.getX(),
+			itemPos.getY(),
+			itemPos.getZ(),
+			2,
+			false,
+			World.ExplosionSourceType.NONE,
+			ParticleTypes.HAPPY_VILLAGER,
+			ParticleTypes.DRIPPING_WATER,
+			Registries.SOUND_EVENT.getEntry(SoundEvents.ITEM_BONE_MEAL_USE));
+
 		itemEntity.remove(Entity.RemovalReason.KILLED);
 		world.scheduleBlockTick(pos, this, GROWTH_TICKS);
 	}
@@ -115,8 +149,12 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 	}
 
 	private void tickGrowth(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-		world.playSound(null, pos, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.BLOCKS, 1.0F, 1.0F);
-		world.setBlockState(pos, state.with(AGE, state.get(AGE) + 1), Block.NOTIFY_LISTENERS);
+		if (world.getBlockEntity(pos) instanceof CrystalSeedBlockEntity blockEntity) {
+			blockEntity.growing = false;
+		}
+
+		world.playSound(null, pos, SoundEvents.BLOCK_AMETHYST_BLOCK_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+		world.setBlockState(pos, state.with(AGE, state.get(AGE) + 1).with(WATERLOGGED, Boolean.FALSE), Block.NOTIFY_ALL_AND_REDRAW);
 		world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(state));
 	}
 
