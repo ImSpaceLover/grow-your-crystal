@@ -28,13 +28,8 @@ public class ModColorProviders {
 
 		ColorProviderRegistry.BLOCK.register(
 			(state, view, pos, tintIndex) -> {
-//				GrowYourCrystal.LOGGER.info("test");
 				if (view != null && pos != null && view.getBlockEntity(pos) instanceof CrystalBlockEntity blockEntity) {
-					GrowYourCrystal.LOGGER.info(String.format("size: %d, index: %d", blockEntity.crystalComponent.colors().size(), tintIndex));
-					GrowYourCrystal.LOGGER.info(String.format("index out of bounds: %b" ,blockEntity.crystalComponent.colors().size() <= tintIndex - 2));
 					if (blockEntity.crystalComponent.colors().size() < 3) {
-//						GrowYourCrystal.LOGGER.info("component is empty");
-//						GrowYourCrystal.LOGGER.info(blockEntity.crystalComponent.colors().toString());
 						return CrystalItemComponent.DEFAULT_COLOR;
 					}	else {
 						int color = blockEntity.crystalComponent.colors().get(tintIndex);
@@ -42,7 +37,6 @@ public class ModColorProviders {
 					}
 				}
 				else {
-//					GrowYourCrystal.LOGGER.info(String.format("%s is not a block entity", state.toString()));
 					return CrystalItemComponent.DEFAULT_COLOR;
 				}
 			},

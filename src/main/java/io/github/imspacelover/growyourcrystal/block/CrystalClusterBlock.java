@@ -24,6 +24,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+	//TODO: add loot table
+	//TODO: add item tint rendering
+
 public class CrystalClusterBlock extends CrystalBlock implements Waterloggable, BlockEntityProvider {
 
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
