@@ -1,26 +1,47 @@
 package io.github.imspacelover.growyourcrystal.block;
 
 import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
+import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
+import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import io.github.imspacelover.growyourcrystal.item.ModItems;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.AmethystBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 public class ModBlocks {
 
-	public static final Block CRYSTAL_SEED_BLOCK = register("crystal_seed", CrystalSeedBlock::new, AbstractBlock.Settings.create().nonOpaque().ticksRandomly(), true);
+	public static final Block CRYSTAL_BLOCK = register("crystal_block", CrystalBlock::new,
+		AbstractBlock.Settings.copy(Blocks.AMETHYST_BLOCK)
+			.nonOpaque().luminance(CrystalBlock::getLuminance).overrideTranslationKey("block.growyourcrystal.crystalBlock"),
+		true);
+
+	public static final Block CRYSTAL_SEED_BLOCK = register("crystal_seed", CrystalSeedBlock::new,
+		AbstractBlock.Settings.copy(Blocks.BUDDING_AMETHYST)
+			.nonOpaque().ticksRandomly().overrideTranslationKey("block.growyourcrystal.crystalSeed"),
+		true);
+
+	public static final Block CRYSTAL_CLUSTER_BLOCK = register("crystal_cluster", CrystalClusterBlock::new,
+		AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER)
+			.nonOpaque().ticksRandomly().overrideTranslationKey("block.growyourcrystal.crystalClusterBlock"),
+		true);
+
 
 	private static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, boolean shouldRegisterItem) {
-
 		RegistryKey<Block> blockKey = keyOfBlock(name);
 
 		Block block = blockFactory.apply(settings.registryKey(blockKey));
@@ -46,7 +67,13 @@ public class ModBlocks {
 	public static void initialize() {
 		ItemGroupEvents.modifyEntriesEvent(ModItems.GROW_YOUR_CRYSTAL_GROUP_KEY).register((itemGroup) -> {
 			itemGroup.add(ModBlocks.CRYSTAL_SEED_BLOCK.asItem());
+			for (DyeColor dyeColor: DyeColor.values()) {
+				int color = dyeColor.getEntityColor();
+				ItemStack itemStack = ModBlocks.CRYSTAL_BLOCK.asItem().getDefaultStack();
+				itemStack.set(ModComponents.CRYSTAL_ITEM_COMPONENT,
+					new CrystalItemComponent(List.of(color, color, color), 0, 0, CrystalItemComponent.DEFAULT_FOOD));
+				itemGroup.add(itemStack);
+			}
 		});
 	}
-
 }

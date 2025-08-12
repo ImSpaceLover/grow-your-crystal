@@ -1,10 +1,14 @@
 package io.github.imspacelover.growyourcrystal.item;
 
 import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
-import io.github.imspacelover.growyourcrystal.component.CrystallineSolutionComponent;
+import io.github.imspacelover.growyourcrystal.block.ModBlocks;
+import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.block.Block;
+import net.minecraft.component.type.FoodComponent;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -16,7 +20,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class ModItems {
 
@@ -26,8 +32,9 @@ public class ModItems {
 
 	public static final Item CRYSTALLINE_SOLUTION = register("crystalline_solution", CrystallineSolutionItem::new, new Item.Settings()
 		.translationKey("item.growyourcrystal.crystallineSolution")
-		.component(ModComponents.CRYSTALLINE_SOLUTION_COMPONENT, new CrystallineSolutionComponent(DyeColor.WHITE, false, false, false)));
-
+		.component(ModComponents.CRYSTAL_ITEM_COMPONENT,
+			new CrystalItemComponent(
+				List.of(CrystalItemComponent.DEFAULT_COLOR), 0, 0, new FoodComponent(0, 0f, false))));
 
 	public static final RegistryKey<ItemGroup> GROW_YOUR_CRYSTAL_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(), Identifier.of(GrowYourCrystal.ID, "grow_your_crystal"));
 	public static final ItemGroup GROW_YOUR_CRYSTAL_GROUP = FabricItemGroup.builder()

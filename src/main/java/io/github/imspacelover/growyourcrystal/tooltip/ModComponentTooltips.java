@@ -6,6 +6,6 @@ import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
 public class ModComponentTooltips {
 
 	public static void initialize() {
-		ComponentTooltipAppenderRegistry.addLast(ModComponents.CRYSTALLINE_SOLUTION_COMPONENT);
+		ComponentTooltipAppenderRegistry.addLast(ModComponents.CRYSTAL_ITEM_COMPONENT);
 	}
 }

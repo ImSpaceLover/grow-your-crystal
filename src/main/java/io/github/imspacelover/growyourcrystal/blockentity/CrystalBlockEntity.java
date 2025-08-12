@@ -1,13 +1,12 @@
 package io.github.imspacelover.growyourcrystal.blockentity;
 
 import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
+import io.github.imspacelover.growyourcrystal.block.ModBlocks;
 import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -17,38 +16,17 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
-public class CrystalSeedBlockEntity extends BlockEntity {
+public class CrystalBlockEntity extends BlockEntity {
 	public static final int MAX_LAYERS = 3;
+
 	public CrystalItemComponent crystalComponent = CrystalItemComponent.DEFAULT;
-	public boolean growing = false;
 
-	public CrystalSeedBlockEntity(BlockPos pos, BlockState state) {
-		super(ModBlockEntities.CRYSTAL_SEED, pos, state);
-	}
-
-	public void addCrystallineSolution(World world, BlockPos pos, BlockState state, ItemEntity itemEntity, int layer) {
-		ItemStack stack = itemEntity.getStack();
-		CrystalItemComponent component = stack.get(ModComponents.CRYSTAL_ITEM_COMPONENT);
-
-		assert component != null;
-		addComponent(component, layer);
-		growing = true;
-
-		markDirty(world, pos, state);
-	}
-
-	public void addComponent(CrystalItemComponent component, int layer) {
-		crystalComponent = new CrystalItemComponent(
-			Stream.concat(crystalComponent.colors().stream(), component.colors().stream()).limit(MAX_LAYERS).toList(),
-			crystalComponent.lightLevel() + component.lightLevel(),
-			crystalComponent.redstoneStrength() + component.redstoneStrength(),
-			new FoodComponent(crystalComponent.foodComponent().nutrition() + component.foodComponent().nutrition(), 1.2f, false));
+	public CrystalBlockEntity(BlockPos pos, BlockState state) {
+		super(ModBlockEntities.CRYSTAL_BLOCK, pos, state);
 	}
 
 	@Override
@@ -57,17 +35,26 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 		if (!crystalComponent.equals(CrystalItemComponent.DEFAULT)) {
 			view.put("crystal_component", CrystalItemComponent.CODEC, Optional.of(crystalComponent).orElse(CrystalItemComponent.DEFAULT));
 		}
-		view.putBoolean("growing", growing);
 	}
 
 	@Override
 	protected void readData(ReadView view) {
 		super.readData(view);
 		this.crystalComponent = view.read("crystal_component", CrystalItemComponent.CODEC).orElse(CrystalItemComponent.DEFAULT);
-		this.growing = view.getBoolean("growing", false);
 		if (world != null) {
 			world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 		}
+	}
+
+	public ItemStack getStackWith() {
+		ItemStack stack = ModBlocks.CRYSTAL_BLOCK.asItem().getDefaultStack();
+		stack.set(ModComponents.CRYSTAL_ITEM_COMPONENT, crystalComponent);
+		return stack;
+	}
+
+	public void setCrystalComponent(CrystalItemComponent component) {
+		crystalComponent = component;
+		markDirty();
 	}
 
 	@Nullable
@@ -79,10 +66,5 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 	@Override
 	public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
 		return createNbt(registryLookup);
-	}
-
-	@Override
-	public @Nullable Object getRenderData() {
-		return super.getRenderData();
 	}
 }

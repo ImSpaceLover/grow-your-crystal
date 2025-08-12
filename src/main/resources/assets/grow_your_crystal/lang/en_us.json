@@ -1,11 +1,22 @@
 {
 	"itemGroup.growyourcrystal.growYourCrystal": "Grow Your Crystal",
 	"item.growyourcrystal.growYourCrystalToolkit": "Chemistry Toolkit",
-
 	"item.growyourcrystal.crystallineSolution": "Crystalline Solution",
-	"item.growyourcrystal.crystallineSolution.color": "Color: %1$s",
+	"item.grow_your_crystal.crystal_seed": "Crystal Seed",
+
+
+	"block.growyourcrystal.crystalSeed":  "Crystal Seed",
+	"block.growyourcrystal.crystalBlock":  "Crystal Block",
+
+
+	"item.tooltip.growyourcrystal.crystallineSolution.color": "Color: %1$s",
 	"item.tooltip.growyourcrystal.crystallineSolution.features": "Features: %1$s",
 	"item.tooltip.growyourcrystal.crystallineSolution.glowing": "Glowing",
 	"item.tooltip.growyourcrystal.crystallineSolution.redstoneEmitter": "Emits redstone signal",
-	"item.tooltip.growyourcrystal.crystallineSolution.edible": "Edible"
+	"item.tooltip.growyourcrystal.crystallineSolution.edible": "Edible",
+
+	"item.tooltip.growyourcrystal.crystalItem.colors": "Colors: %1$s",
+	"item.tooltip.growyourcrystal.crystalItem.lightLevel": "Light: %1$s",
+	"item.tooltip.growyourcrystal.crystalItem.redstoneStrength": "Redstone strength: %1$s",
+	"item.tooltip.growyourcrystal.crystalItem.foodNutrition": "Food value: %1$s"
 }

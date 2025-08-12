@@ -1,11 +1,11 @@
 package io.github.imspacelover.growyourcrystal.recipe;
 
 import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
-import io.github.imspacelover.growyourcrystal.component.CrystallineSolutionComponent;
+import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import io.github.imspacelover.growyourcrystal.item.GrowYourCrystalToolkitItem;
 import io.github.imspacelover.growyourcrystal.item.ModItems;
-import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,11 +16,12 @@ import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.DyeColor;
+import net.minecraft.util.Colors;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CrystallineSolutionRecipe extends SpecialCraftingRecipe {
@@ -34,88 +35,87 @@ public class CrystallineSolutionRecipe extends SpecialCraftingRecipe {
 	public CrystallineSolutionRecipe(CraftingRecipeCategory category) {
 		super(category);
 	}
-
 	@Override
 	public boolean matches(CraftingRecipeInput input, World world) {
-		if (input.getStackCount() < 2 || input.getStackCount() > 3) {
+		if (input.getStackCount() < 2) {
 			return false;
 		} else {
-			boolean hasRedstone = false;
-			boolean hasGlowstone = false;
-			boolean hasSugar = false;
-			boolean hasDye = false;
+			int redstoneModifiers = 0;
+			int lightModifiers = 0;
+			int foodModifiers = 0;
+			int colorModifiers = 0;
 			boolean hasToolkit = false;
 
 			for (int i = 0; i < input.size(); i++) {
 				ItemStack itemStack = input.getStackInSlot(i);
 				if (!itemStack.isEmpty()) {
 					if (LIGHT_MODIFIER.test(itemStack)) {
-						if (hasGlowstone) {
+						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is glowstone", i));
+						if (lightModifiers > 5) {
 							return false;
 						}
-
-						hasGlowstone = true;
+						lightModifiers += 1;
 					} else if (REDSTONE_MODIFIER.test(itemStack)) {
-						if (hasRedstone) {
+						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is redstone", i));
+						if (redstoneModifiers > 5) {
 							return false;
 						}
-
-
-						hasRedstone = true;
-					} else if (GROW_YOUR_CRYSTAL_TOOLKIT.test(itemStack)) {
-						if (hasToolkit) {
-							return false;
-						}
-
-
-						hasToolkit = true;
+						redstoneModifiers += 1;
 					} else if (FOOD_MODIFIER.test(itemStack)) {
-						if (hasSugar) {
+						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is sugar", i));
+						if (foodModifiers > 5) {
 							return false;
 						}
-
-
-						hasSugar = true;
+						foodModifiers += 1;
+					} else if (itemStack.getItem() instanceof DyeItem) {
+						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is a dye", i));
+						if (colorModifiers > 2) {
+							return false;
+						}
+						colorModifiers += 1;
 					} else {
-						if (!(itemStack.getItem() instanceof DyeItem)) {
+						if (GROW_YOUR_CRYSTAL_TOOLKIT.test(itemStack)) {
+							hasToolkit = true;
+						} else {
 							return false;
 						}
-
-
-						hasDye = true;
+						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is a toolkit", i));
 					}
 				}
 			}
-
-			return hasToolkit && hasDye;
+			return hasToolkit && colorModifiers > 0;
 		}
 	}
 
 	@Override
 	public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup registries) {
-		boolean hasRedstone = false;
-		boolean hasGlowstone = false;
-		boolean hasSugar = false;
+		int redstoneModifiers = 0;
+		int lightModifiers = 0;
+		int foodModifiers = 0;
 
-		DyeColor color = DyeColor.WHITE;
+		List<Integer> colors = new ArrayList<>();
 
 		for (int i = 0; i < input.size(); i++) {
 			ItemStack itemStack = input.getStackInSlot(i);
 			if (!itemStack.isEmpty()) {
-				if (LIGHT_MODIFIER.test(itemStack)) {
-					hasGlowstone = true;
-				} else if (REDSTONE_MODIFIER.test(itemStack)) {
-					hasRedstone = true;
-				} else if (FOOD_MODIFIER.test(itemStack)) {
-					hasSugar = true;
-				} else if (itemStack.getItem() instanceof DyeItem dyeItem) {
-					color = dyeItem.getColor();
+				lightModifiers += LIGHT_MODIFIER.test(itemStack) ? 1 : 0;
+				redstoneModifiers += REDSTONE_MODIFIER.test(itemStack) ? 1 : 0;
+				foodModifiers += FOOD_MODIFIER.test(itemStack) ? 1 : 0;
+				if (itemStack.getItem() instanceof DyeItem dyeItem) {
+					colors.add(dyeItem.getColor().getEntityColor());
 				}
 			}
 		}
 
+//		int colorMix = ColorHelper.mix(colors.getFirst(), colors.getLast());
+
+		int colorMix = ColorHelper.average(colors.getFirst(), colors.getLast());
 		ItemStack itemStack = new ItemStack(ModItems.CRYSTALLINE_SOLUTION);
-		itemStack.set(ModComponents.CRYSTALLINE_SOLUTION_COMPONENT, new CrystallineSolutionComponent(color, hasGlowstone, hasRedstone, hasSugar));
+		itemStack.set(ModComponents.CRYSTAL_ITEM_COMPONENT, new CrystalItemComponent(
+			List.of(colorMix),
+			lightModifiers,
+			redstoneModifiers,
+			new FoodComponent(foodModifiers, 1.2f, false)));
 		return itemStack;
 	}
 

@@ -8,10 +8,10 @@ import net.minecraft.util.Identifier;
 
 public class ModComponents {
 
-	public static final ComponentType<CrystallineSolutionComponent> CRYSTALLINE_SOLUTION_COMPONENT = Registry.register(
+	public static final ComponentType<CrystalItemComponent> CRYSTAL_ITEM_COMPONENT = Registry.register(
 		Registries.DATA_COMPONENT_TYPE,
-		Identifier.of(GrowYourCrystal.ID, "crystalline_solution_component"),
-		ComponentType.<CrystallineSolutionComponent>builder().codec(CrystallineSolutionComponent.CODEC).build()
+		Identifier.of(GrowYourCrystal.ID, "crystal_item_component"),
+		ComponentType.<CrystalItemComponent>builder().codec(CrystalItemComponent.CODEC).build()
 	);
 
 	public static void initialize() {

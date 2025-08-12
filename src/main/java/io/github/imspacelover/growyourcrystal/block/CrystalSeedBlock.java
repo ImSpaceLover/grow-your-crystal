@@ -2,12 +2,15 @@ package io.github.imspacelover.growyourcrystal.block;
 
 
 import com.mojang.serialization.MapCodec;
+import io.github.imspacelover.growyourcrystal.blockentity.CrystalBlockEntity;
 import io.github.imspacelover.growyourcrystal.blockentity.CrystalSeedBlockEntity;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.entity.CrafterBlockEntity;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCollisionHandler;
 import net.minecraft.entity.ItemEntity;
@@ -43,7 +46,6 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.explosion.AdvancedExplosionBehavior;
-import net.minecraft.world.explosion.ExplosionBehavior;
 import net.minecraft.world.tick.ScheduledTickView;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +67,7 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 		);
 
 	public CrystalSeedBlock(Settings settings) {
-		super(settings.nonOpaque());
+		super(settings);
 		setDefaultState(getDefaultState().with(AGE, 0));
 	}
 
@@ -86,22 +88,16 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 
 	@Override
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-		builder.add(Properties.WATERLOGGED);
-		builder.add(AGE);
+		builder.add(WATERLOGGED, AGE);
 	}
 
-	@Override
-	protected boolean isTransparent(BlockState state) {
-		return true;
-	}
-
-	@Override
+		@Override
 	protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler) {
 		BlockEntity blockEntity = world.getBlockEntity(pos);
 		if (blockEntity instanceof CrystalSeedBlockEntity crystalSeedBlockEntity
 			&& entity instanceof ItemEntity itemEntity
 			&& !itemEntity.getStack().isEmpty()
-			&& itemEntity.getStack().contains(ModComponents.CRYSTALLINE_SOLUTION_COMPONENT)
+			&& itemEntity.getStack().contains(ModComponents.CRYSTAL_ITEM_COMPONENT)
 			&& !world.isClient()
 			&& state.get(AGE) != 3
 			&& state.get(WATERLOGGED)
@@ -130,7 +126,7 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 			itemPos.getX(),
 			itemPos.getY(),
 			itemPos.getZ(),
-			2,
+			5,
 			false,
 			World.ExplosionSourceType.NONE,
 			ParticleTypes.HAPPY_VILLAGER,
@@ -146,6 +142,37 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 		if ((Boolean)state.get(WATERLOGGED)) {
 			this.tickGrowth(state, world, pos, random);
 		}
+	}
+
+	@Override
+	protected void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+		if (state.get(AGE) != 3) {
+			return;
+		}
+		if (random.nextInt(4) == 0) {
+			Direction direction = DIRECTIONS[random.nextInt(DIRECTIONS.length)];
+			BlockPos blockPos = pos.offset(direction);
+			BlockState blockState = world.getBlockState(blockPos);
+			Block block = null;
+			if (canGrowIn(blockState)) {
+				block = ModBlocks.CRYSTAL_CLUSTER_BLOCK;
+			}
+			if (block != null) {
+				BlockState blockState2 = block.getDefaultState()
+					.with(CrystalClusterBlock.FACING, direction)
+					.with(CrystalClusterBlock.WATERLOGGED, blockState.getFluidState().getFluid() == Fluids.WATER);
+				world.setBlockState(blockPos, blockState2);
+				if (world.getBlockEntity(pos) instanceof CrystalSeedBlockEntity crystalSeedBlockEntity) {
+					if (world.getBlockEntity(blockPos) instanceof CrystalBlockEntity crystalBlockEntity) {
+						crystalBlockEntity.setCrystalComponent(crystalSeedBlockEntity.crystalComponent);
+					}
+				}
+			}
+		}
+	}
+
+	public static boolean canGrowIn(BlockState state) {
+		return state.isAir() || state.isOf(Blocks.WATER) && state.getFluidState().getLevel() == 8;
 	}
 
 	private void tickGrowth(BlockState state, ServerWorld world, BlockPos pos, Random random) {
