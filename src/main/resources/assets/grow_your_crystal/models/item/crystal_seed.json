@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "grow_your_crystal:item/crystal_seed"
+	}
+}

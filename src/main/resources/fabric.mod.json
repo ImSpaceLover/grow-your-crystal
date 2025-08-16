@@ -33,6 +33,9 @@
 		],
 		"client": [
 			"io.github.imspacelover.growyourcrystal.client.GrowYourCrystalClient"
+		],
+		"fabric-datagen": [
+			"io.github.imspacelover.growyourcrystal.client.datagen.GrowYourCrystalDatagen"
 		]
 	}
 }

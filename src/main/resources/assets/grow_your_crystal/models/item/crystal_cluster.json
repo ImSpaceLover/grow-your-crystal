@@ -1,0 +1,13 @@
+{
+	"parent": "item/amethyst_bud",
+	"textures": {
+		"layer0": "grow_your_crystal:block/crystal_cluster_0",
+		"layer1": "grow_your_crystal:block/crystal_cluster_1",
+		"layer2": "grow_your_crystal:block/crystal_cluster_2"
+	},
+	"display": {
+		"fixed": {
+			"translation": [ 0, 4, 0 ]
+		}
+	}
+}

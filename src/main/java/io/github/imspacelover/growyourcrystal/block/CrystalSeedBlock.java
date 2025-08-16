@@ -5,6 +5,8 @@ import com.mojang.serialization.MapCodec;
 import io.github.imspacelover.growyourcrystal.blockentity.CrystalBlockEntity;
 import io.github.imspacelover.growyourcrystal.blockentity.CrystalSeedBlockEntity;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
+import io.github.imspacelover.growyourcrystal.item.CrystallineSolutionItem;
+import io.github.imspacelover.growyourcrystal.item.ModItems;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -19,6 +21,7 @@ import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleEffect;
@@ -57,7 +60,7 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 
 	public static final IntProperty AGE = Properties.AGE_3;
 	public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-	public static final int GROWTH_TICKS = 80;
+	public static final IntProperty LIGHT_LEVEL = IntProperty.of("light", 0, 15);
 
 	public final Map<Integer, VoxelShape> SHAPES = Map.of(
 		AGE.getValues().get(0), Block.createCubeShape(4),
@@ -66,9 +69,11 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 		AGE.getValues().get(3), Block.createCubeShape(16)
 		);
 
+	public static final int GROWTH_TICKS = 5000;
+	public static final int GROWTH_TICKS_CREATIVE = 20;
 	public CrystalSeedBlock(Settings settings) {
 		super(settings);
-		setDefaultState(getDefaultState().with(AGE, 0));
+		setDefaultState(getDefaultState().with(AGE, 0).with(LIGHT_LEVEL, 0));
 	}
 
 	@Override
@@ -88,7 +93,7 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 
 	@Override
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-		builder.add(WATERLOGGED, AGE);
+		builder.add(WATERLOGGED, AGE, LIGHT_LEVEL);
 	}
 
 		@Override
@@ -126,15 +131,20 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 			itemPos.getX(),
 			itemPos.getY(),
 			itemPos.getZ(),
-			5,
+			2,
 			false,
 			World.ExplosionSourceType.NONE,
 			ParticleTypes.HAPPY_VILLAGER,
 			ParticleTypes.DRIPPING_WATER,
 			Registries.SOUND_EVENT.getEntry(SoundEvents.ITEM_BONE_MEAL_USE));
 
-		itemEntity.remove(Entity.RemovalReason.KILLED);
-		world.scheduleBlockTick(pos, this, GROWTH_TICKS);
+		int growth_ticks = GROWTH_TICKS;
+		if (itemEntity.getStack().getItem() == ModItems.CREATIVE_SOLUTION) {
+
+			growth_ticks = GROWTH_TICKS_CREATIVE;
+		}
+		itemEntity.getStack().decrement(1);
+		world.scheduleBlockTick(pos, this, growth_ticks);
 	}
 
 	@Override
@@ -158,11 +168,13 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 				block = ModBlocks.CRYSTAL_CLUSTER_BLOCK;
 			}
 			if (block != null) {
-				BlockState blockState2 = block.getDefaultState()
-					.with(CrystalClusterBlock.FACING, direction)
-					.with(CrystalClusterBlock.WATERLOGGED, blockState.getFluidState().getFluid() == Fluids.WATER);
-				world.setBlockState(blockPos, blockState2);
 				if (world.getBlockEntity(pos) instanceof CrystalSeedBlockEntity crystalSeedBlockEntity) {
+					BlockState blockStateCluster = block.getDefaultState()
+						.with(CrystalClusterBlock.FACING, direction)
+						.with(CrystalClusterBlock.WATERLOGGED, blockState.getFluidState().getFluid() == Fluids.WATER)
+						.with(CrystalClusterBlock.LIGHT_LEVEL, crystalSeedBlockEntity.crystalComponent.lightLevel())
+						.with(CrystalClusterBlock.EMITS_REDSTONE, crystalSeedBlockEntity.getEmitsRedstone());
+					world.setBlockState(blockPos, blockStateCluster);
 					if (world.getBlockEntity(blockPos) instanceof CrystalBlockEntity crystalBlockEntity) {
 						crystalBlockEntity.setCrystalComponent(crystalSeedBlockEntity.crystalComponent);
 					}
@@ -176,13 +188,20 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 	}
 
 	private void tickGrowth(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-		if (world.getBlockEntity(pos) instanceof CrystalSeedBlockEntity blockEntity) {
-			blockEntity.growing = false;
+		if (world.getBlockEntity(pos) instanceof CrystalSeedBlockEntity crystalSeedBlockEntity) {
+			crystalSeedBlockEntity.growing = false;
+			world.playSound(null, pos, SoundEvents.BLOCK_AMETHYST_BLOCK_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+			world.setBlockState(pos,
+				state.with(AGE, state.get(AGE) + 1)
+					.with(WATERLOGGED, Boolean.FALSE)
+					.with(LIGHT_LEVEL, crystalSeedBlockEntity.crystalComponent.lightLevel()),
+				Block.NOTIFY_ALL_AND_REDRAW);
+			world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(state));
 		}
+	}
 
-		world.playSound(null, pos, SoundEvents.BLOCK_AMETHYST_BLOCK_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
-		world.setBlockState(pos, state.with(AGE, state.get(AGE) + 1).with(WATERLOGGED, Boolean.FALSE), Block.NOTIFY_ALL_AND_REDRAW);
-		world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(state));
+	public static int getLuminance(BlockState state) {
+		return state.get(LIGHT_LEVEL);
 	}
 
 	@Override

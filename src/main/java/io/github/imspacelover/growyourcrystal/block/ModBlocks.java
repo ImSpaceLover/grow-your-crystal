@@ -9,6 +9,8 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.AmethystBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,6 +18,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
@@ -27,19 +30,32 @@ public class ModBlocks {
 
 	public static final Block CRYSTAL_BLOCK = register("crystal_block", CrystalBlock::new,
 		AbstractBlock.Settings.copy(Blocks.AMETHYST_BLOCK)
-			.nonOpaque().luminance(CrystalBlock::getLuminance).overrideTranslationKey("block.growyourcrystal.crystalBlock"),
+			.nonOpaque()
+			.luminance(CrystalBlock::getLuminance)
+			.requiresTool()
+			.hardness(Blocks.AMETHYST_BLOCK.getHardness()),
 		true);
 
 	public static final Block CRYSTAL_SEED_BLOCK = register("crystal_seed", CrystalSeedBlock::new,
-		AbstractBlock.Settings.copy(Blocks.BUDDING_AMETHYST)
-			.nonOpaque().ticksRandomly().overrideTranslationKey("block.growyourcrystal.crystalSeed"),
+		AbstractBlock.Settings.create().sounds(BlockSoundGroup.AMETHYST_BLOCK)
+			.nonOpaque()
+			.ticksRandomly()
+			.requiresTool()
+			.luminance(CrystalSeedBlock::getLuminance)
+			.pistonBehavior(PistonBehavior.BLOCK)
+			.hardness(Blocks.AMETHYST_BLOCK.getHardness()),
 		true);
 
 	public static final Block CRYSTAL_CLUSTER_BLOCK = register("crystal_cluster", CrystalClusterBlock::new,
-		AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER)
-			.nonOpaque().ticksRandomly().overrideTranslationKey("block.growyourcrystal.crystalClusterBlock"),
-		true);
+		AbstractBlock.Settings.create().sounds(BlockSoundGroup.LARGE_AMETHYST_BUD)
+			.requiresTool()
+			.nonOpaque().ticksRandomly()
+			.luminance(CrystalClusterBlock::getLuminance)
+			.requiresTool()
+			.pistonBehavior(PistonBehavior.DESTROY)
+			.hardness(Blocks.AMETHYST_CLUSTER.getHardness()),
 
+		new Item.Settings().food(new FoodComponent.Builder().build()));
 
 	private static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, boolean shouldRegisterItem) {
 		RegistryKey<Block> blockKey = keyOfBlock(name);
@@ -51,6 +67,20 @@ public class ModBlocks {
 			BlockItem blockItem = new BlockItem(block, new Item.Settings().registryKey(itemKey));
 			Registry.register(Registries.ITEM, itemKey, blockItem);
 		}
+
+		Registry.register(Registries.BLOCK, blockKey, block);
+		return block;
+	}
+
+	private static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, Item.Settings itemSettings) {
+		RegistryKey<Block> blockKey = keyOfBlock(name);
+
+		Block block = blockFactory.apply(settings.registryKey(blockKey));
+
+		RegistryKey<Item> itemKey = keyOfItem(name);
+		BlockItem blockItem = new BlockItem(block, itemSettings.registryKey(itemKey));
+		Registry.register(Registries.ITEM, itemKey, blockItem);
+
 
 		Registry.register(Registries.BLOCK, blockKey, block);
 		return block;
@@ -71,7 +101,7 @@ public class ModBlocks {
 				int color = dyeColor.getEntityColor();
 				ItemStack itemStack = ModBlocks.CRYSTAL_BLOCK.asItem().getDefaultStack();
 				itemStack.set(ModComponents.CRYSTAL_ITEM_COMPONENT,
-					new CrystalItemComponent(List.of(color, color, color), 0, 0, CrystalItemComponent.DEFAULT_FOOD));
+					new CrystalItemComponent(List.of(color, color, color), 0, 0, 0));
 				itemGroup.add(itemStack);
 			}
 		});

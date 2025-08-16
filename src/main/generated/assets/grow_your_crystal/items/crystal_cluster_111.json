@@ -1,0 +1,17 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "grow_your_crystal:item/crystal_cluster",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      },
+      {
+        "type": "grow_your_crystal:crystal_color",
+        "default": 0,
+        "layer": 0
+      }
+    ]
+  }
+}

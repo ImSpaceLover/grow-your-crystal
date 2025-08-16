@@ -6,9 +6,7 @@ import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.block.Block;
 import net.minecraft.component.type.FoodComponent;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -22,24 +20,32 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 public class ModItems {
 
-	public static final Item GROW_YOUR_CRYSTAL_TOOLKIT = register("grow_your_crystal_toolkit", GrowYourCrystalToolkitItem::new, new GrowYourCrystalToolkitItem.Settings()
+	public static final Item CRYSTAL_GROWING_TOOLKIT = register("grow_your_crystal_toolkit", Item::new, new Item.Settings()
 		.maxDamage(64)
-		.translationKey("item.growyourcrystal.growYourCrystalToolkit"));
+		.translationKey("item.grow_your_crystal.crystal_growing_toolkit"));
 
 	public static final Item CRYSTALLINE_SOLUTION = register("crystalline_solution", CrystallineSolutionItem::new, new Item.Settings()
-		.translationKey("item.growyourcrystal.crystallineSolution")
+		.translationKey("item.grow_your_crystal.crystalline_solution")
 		.component(ModComponents.CRYSTAL_ITEM_COMPONENT,
 			new CrystalItemComponent(
-				List.of(CrystalItemComponent.DEFAULT_COLOR), 0, 0, new FoodComponent(0, 0f, false))));
+				List.of(CrystalItemComponent.DEFAULT_COLOR), 0, 0, 0)));
+
+	public static final Item CREATIVE_SOLUTION = register("creative_solution", CreativeSolutionItem::new, new Item.Settings()
+		.translationKey("item.grow_your_crystal.creative_solution")
+		.component(ModComponents.CRYSTAL_ITEM_COMPONENT,
+			new CrystalItemComponent(
+				List.of(CrystalItemComponent.DEFAULT_COLOR), 0, 0, 0)));
+
+	public static final Item CREATIVE_CRYSTAL = register("creative_crystal", Item::new, new Item.Settings()
+		.translationKey("item.grow_your_crystal.creative_crystal"));
 
 	public static final RegistryKey<ItemGroup> GROW_YOUR_CRYSTAL_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(), Identifier.of(GrowYourCrystal.ID, "grow_your_crystal"));
 	public static final ItemGroup GROW_YOUR_CRYSTAL_GROUP = FabricItemGroup.builder()
-		.icon(() -> new ItemStack(GROW_YOUR_CRYSTAL_TOOLKIT))
-		.displayName(Text.translatable("itemGroup.growyourcrystal.growYourCrystal"))
+		.icon(() -> new ItemStack(CRYSTAL_GROWING_TOOLKIT))
+		.displayName(Text.translatable("itemgroup.grow_your_crystal.grow_your_crystal"))
 		.build();
 
 	private static Item register(String name, Function<Item.Settings, Item> itemFactory, Item.Settings settings) {
@@ -57,8 +63,15 @@ public class ModItems {
 		Registry.register(Registries.ITEM_GROUP, GROW_YOUR_CRYSTAL_GROUP_KEY, GROW_YOUR_CRYSTAL_GROUP);
 
 		ItemGroupEvents.modifyEntriesEvent(GROW_YOUR_CRYSTAL_GROUP_KEY).register((itemGroup) -> {
-			itemGroup.add(GROW_YOUR_CRYSTAL_TOOLKIT);
-			itemGroup.add(CRYSTALLINE_SOLUTION);
+			itemGroup.add(CRYSTAL_GROWING_TOOLKIT);
+			itemGroup.add(CREATIVE_CRYSTAL);
+			for (DyeColor dyeColor: DyeColor.values()) {
+				int color = dyeColor.getEntityColor();
+				ItemStack itemStack = CRYSTALLINE_SOLUTION.asItem().getDefaultStack();
+				itemStack.set(ModComponents.CRYSTAL_ITEM_COMPONENT,
+					new CrystalItemComponent(List.of(color), 0, 0, 0));
+				itemGroup.add(itemStack);
+			}
 		});
 	}
 }

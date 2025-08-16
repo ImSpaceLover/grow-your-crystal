@@ -1,7 +1,7 @@
 {
 	"model": {
 		"type": "minecraft:model",
-		"model": "grow_your_crystal:block/crystal_block",
+		"model": "grow_your_crystal:item/crystal_cluster",
 		"tints": [
 			{
 				"type": "grow_your_crystal:crystal_color",

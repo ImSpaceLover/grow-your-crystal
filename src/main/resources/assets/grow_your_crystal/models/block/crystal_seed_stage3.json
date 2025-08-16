@@ -3,9 +3,9 @@
 	"credit": "Made with Blockbench",
 	"parent": "grow_your_crystal:block/crystal",
 	"textures": {
-		"1": "grow_your_crystal:block/crystal_seed_0",
-		"2": "grow_your_crystal:block/crystal_seed_1",
-		"3": "grow_your_crystal:block/crystal_seed_2",
+		"layer0": "grow_your_crystal:block/crystal_seed_0",
+		"layer1": "grow_your_crystal:block/crystal_seed_1",
+		"layer2": "grow_your_crystal:block/crystal_seed_2",
 		"particle": "grow_your_crystal:block/crystal_seed_0"
 	}
 }

@@ -1,7 +1,15 @@
 package io.github.imspacelover.growyourcrystal.block;
 
+import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
+import io.github.imspacelover.growyourcrystal.blockentity.CrystalBlockEntity;
+import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
+import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BlockStateComponent;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
@@ -16,16 +24,13 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.*;
 import net.minecraft.world.tick.ScheduledTickView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 	//TODO: add loot table
-	//TODO: add item tint rendering
 
 public class CrystalClusterBlock extends CrystalBlock implements Waterloggable, BlockEntityProvider {
 
@@ -35,8 +40,8 @@ public class CrystalClusterBlock extends CrystalBlock implements Waterloggable, 
 
 	public CrystalClusterBlock(Settings settings) {
 		super(settings);
-		this.setDefaultState(this.getDefaultState().with(WATERLOGGED, false).with(FACING, Direction.UP));
-		this.shapesByDirection = VoxelShapes.createFacingShapeMap(Block.createCuboidZShape(12, 16.0F - 12.0F, 16.0));
+		this.setDefaultState(this.getDefaultState().with(WATERLOGGED, false).with(FACING, Direction.UP).with(LIGHT_LEVEL, 0));
+		this.shapesByDirection = VoxelShapes.createFacingShapeMap(Block.createCuboidZShape(6, 16.0F - 6.0F, 16.0));
 	}
 
 	@Override
@@ -101,9 +106,7 @@ public class CrystalClusterBlock extends CrystalBlock implements Waterloggable, 
 
 	@Override
 	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-		builder.add(WATERLOGGED, FACING);
+		builder.add(WATERLOGGED, FACING, LIGHT_LEVEL, EMITS_REDSTONE);
 	}
-
-
 
 }

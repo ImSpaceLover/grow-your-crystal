@@ -18,7 +18,7 @@ public class ModColorProviders {
 						return CrystalItemComponent.DEFAULT_COLOR;
 					}
 					int color = blockEntity.crystalComponent.colors().get(tintIndex);
-					return color == DyeColor.BLACK.getEntityColor() ? ColorHelper.withBrightness(color, 0.4f) : ColorHelper.withBrightness(color, 1f);
+					return CrystalItemComponent.getTweakedColor(color);
 				}
 				else {
 					return CrystalItemComponent.DEFAULT_COLOR;
@@ -29,11 +29,11 @@ public class ModColorProviders {
 		ColorProviderRegistry.BLOCK.register(
 			(state, view, pos, tintIndex) -> {
 				if (view != null && pos != null && view.getBlockEntity(pos) instanceof CrystalBlockEntity blockEntity) {
-					if (blockEntity.crystalComponent.colors().size() < 3) {
+					if (blockEntity.crystalComponent.colors() != null && blockEntity.crystalComponent.colors().size() <= tintIndex) {
 						return CrystalItemComponent.DEFAULT_COLOR;
 					}	else {
 						int color = blockEntity.crystalComponent.colors().get(tintIndex);
-						return color == DyeColor.BLACK.getEntityColor() ? ColorHelper.withBrightness(color, 0.4f) : ColorHelper.withBrightness(color, 1f);
+						return CrystalItemComponent.getTweakedColor(color);
 					}
 				}
 				else {

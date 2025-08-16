@@ -8,6 +8,10 @@ import net.minecraft.util.Identifier;
 
 public class ModComponents {
 
+	public ModComponents() {
+		
+	}
+
 	public static final ComponentType<CrystalItemComponent> CRYSTAL_ITEM_COMPONENT = Registry.register(
 		Registries.DATA_COMPONENT_TYPE,
 		Identifier.of(GrowYourCrystal.ID, "crystal_item_component"),

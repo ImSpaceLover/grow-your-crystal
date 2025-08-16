@@ -4,9 +4,14 @@ import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
 import io.github.imspacelover.growyourcrystal.block.ModBlocks;
 import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.ComponentType;
+import net.minecraft.component.ComponentsAccess;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -29,10 +34,14 @@ public class CrystalBlockEntity extends BlockEntity {
 		super(ModBlockEntities.CRYSTAL_BLOCK, pos, state);
 	}
 
+	public boolean getEmitsRedstone() {
+		return crystalComponent.redstoneStrength() > 0;
+	}
+
 	@Override
 	protected void writeData(WriteView view) {
 		super.writeData(view);
-		if (!crystalComponent.equals(CrystalItemComponent.DEFAULT)) {
+		if (this.crystalComponent != null && !crystalComponent.equals(CrystalItemComponent.DEFAULT)) {
 			view.put("crystal_component", CrystalItemComponent.CODEC, Optional.of(crystalComponent).orElse(CrystalItemComponent.DEFAULT));
 		}
 	}
@@ -46,10 +55,25 @@ public class CrystalBlockEntity extends BlockEntity {
 		}
 	}
 
-	public ItemStack getStackWith() {
-		ItemStack stack = ModBlocks.CRYSTAL_BLOCK.asItem().getDefaultStack();
+	public ItemStack getStackWith(Block block) {
+		ItemStack stack = block.asItem().getDefaultStack();
 		stack.set(ModComponents.CRYSTAL_ITEM_COMPONENT, crystalComponent);
+		stack.set(DataComponentTypes.FOOD, this.crystalComponent.getFoodComponent());
 		return stack;
+	}
+
+	@Override
+	protected void addComponents(ComponentMap.Builder builder) {
+		super.addComponents(builder);
+		builder.add(ModComponents.CRYSTAL_ITEM_COMPONENT, this.crystalComponent);
+		builder.add(DataComponentTypes.FOOD, this.crystalComponent.getFoodComponent());
+	}
+
+
+	@Override
+	protected void readComponents(ComponentsAccess components) {
+		super.readComponents(components);
+		this.crystalComponent = components.get(ModComponents.CRYSTAL_ITEM_COMPONENT);
 	}
 
 	public void setCrystalComponent(CrystalItemComponent component) {

@@ -1,6 +1,5 @@
 package io.github.imspacelover.growyourcrystal.blockentity;
 
-import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
 import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import net.minecraft.block.BlockState;
@@ -46,9 +45,9 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 	public void addComponent(CrystalItemComponent component, int layer) {
 		crystalComponent = new CrystalItemComponent(
 			Stream.concat(crystalComponent.colors().stream(), component.colors().stream()).limit(MAX_LAYERS).toList(),
-			crystalComponent.lightLevel() + component.lightLevel(),
-			crystalComponent.redstoneStrength() + component.redstoneStrength(),
-			new FoodComponent(crystalComponent.foodComponent().nutrition() + component.foodComponent().nutrition(), 1.2f, false));
+			Math.min(crystalComponent.lightLevel() + component.lightLevel(), 15),
+			Math.min(crystalComponent.redstoneStrength() + component.redstoneStrength(), 15),
+			crystalComponent.foodNutrition() + component.foodNutrition());
 	}
 
 	@Override
@@ -68,6 +67,10 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 		if (world != null) {
 			world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 		}
+	}
+
+	public boolean getEmitsRedstone() {
+		return crystalComponent.redstoneStrength() > 0;
 	}
 
 	@Nullable

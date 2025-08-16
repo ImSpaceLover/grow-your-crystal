@@ -19,13 +19,12 @@ public class GrowYourCrystal implements ModInitializer {
 		ModComponents.initialize();
 		ModComponentTooltips.initialize();
 
-		ModBlockEntities.initialize();
-		ModBlocks.initialize();
 
 		ModItems.initialize();
 
+		ModBlockEntities.initialize();
+		ModBlocks.initialize();
+
 		ModRecipeSerializer.initialize();
-
-
 	}
 }
