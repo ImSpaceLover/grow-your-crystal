@@ -41,7 +41,7 @@ public class CrystalClusterBlock extends CrystalBlock implements Waterloggable, 
 	public CrystalClusterBlock(Settings settings) {
 		super(settings);
 		this.setDefaultState(this.getDefaultState().with(WATERLOGGED, false).with(FACING, Direction.UP).with(LIGHT_LEVEL, 0));
-		this.shapesByDirection = VoxelShapes.createFacingShapeMap(Block.createCuboidZShape(6, 16.0F - 6.0F, 16.0));
+		this.shapesByDirection = VoxelShapes.createFacingShapeMap(Block.createCuboidZShape(12, 16.0F - 8.0F, 16.0));
 	}
 
 	@Override

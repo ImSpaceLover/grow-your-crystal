@@ -5,9 +5,8 @@ import io.github.imspacelover.growyourcrystal.block.ModBlocks;
 import io.github.imspacelover.growyourcrystal.blockentity.CrystalBlockEntity;
 import io.github.imspacelover.growyourcrystal.blockentity.CrystalSeedBlockEntity;
 import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
+import io.github.imspacelover.growyourcrystal.util.ColorUtils;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.ColorHelper;
 
 public class ModColorProviders {
 	public static void register() {
@@ -15,13 +14,13 @@ public class ModColorProviders {
 			(state, view, pos, tintIndex) -> {
 				if (view != null && pos != null && view.getBlockEntity(pos) instanceof CrystalSeedBlockEntity blockEntity) {
 					if (blockEntity.crystalComponent.colors().isEmpty()) {
-						return CrystalItemComponent.DEFAULT_COLOR;
+						return ColorUtils.DEFAULT_COLOR;
 					}
 					int color = blockEntity.crystalComponent.colors().get(tintIndex);
-					return CrystalItemComponent.getTweakedColor(color);
+					return ColorUtils.getTweakedColor(color);
 				}
 				else {
-					return CrystalItemComponent.DEFAULT_COLOR;
+					return ColorUtils.DEFAULT_COLOR;
 				}
 			},
 			ModBlocks.CRYSTAL_SEED_BLOCK);
@@ -30,14 +29,14 @@ public class ModColorProviders {
 			(state, view, pos, tintIndex) -> {
 				if (view != null && pos != null && view.getBlockEntity(pos) instanceof CrystalBlockEntity blockEntity) {
 					if (blockEntity.crystalComponent.colors() != null && blockEntity.crystalComponent.colors().size() <= tintIndex) {
-						return CrystalItemComponent.DEFAULT_COLOR;
+						return ColorUtils.DEFAULT_COLOR;
 					}	else {
 						int color = blockEntity.crystalComponent.colors().get(tintIndex);
-						return CrystalItemComponent.getTweakedColor(color);
+						return ColorUtils.getTweakedColor(color);
 					}
 				}
 				else {
-					return CrystalItemComponent.DEFAULT_COLOR;
+					return ColorUtils.DEFAULT_COLOR;
 				}
 			},
 			ModBlocks.CRYSTAL_BLOCK,

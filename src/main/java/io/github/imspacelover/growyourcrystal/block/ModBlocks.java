@@ -4,6 +4,7 @@ import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
 import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import io.github.imspacelover.growyourcrystal.item.ModItems;
+import io.github.imspacelover.growyourcrystal.util.ColorUtils;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.AmethystBlock;
@@ -98,7 +99,7 @@ public class ModBlocks {
 		ItemGroupEvents.modifyEntriesEvent(ModItems.GROW_YOUR_CRYSTAL_GROUP_KEY).register((itemGroup) -> {
 			itemGroup.add(ModBlocks.CRYSTAL_SEED_BLOCK.asItem());
 			for (DyeColor dyeColor: DyeColor.values()) {
-				int color = dyeColor.getEntityColor();
+				int color = ColorUtils.getCrystalColor(dyeColor);
 				ItemStack itemStack = ModBlocks.CRYSTAL_BLOCK.asItem().getDefaultStack();
 				itemStack.set(ModComponents.CRYSTAL_ITEM_COMPONENT,
 					new CrystalItemComponent(List.of(color, color, color), 0, 0, 0));

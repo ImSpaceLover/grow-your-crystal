@@ -4,6 +4,7 @@ import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
 import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import io.github.imspacelover.growyourcrystal.item.ModItems;
+import io.github.imspacelover.growyourcrystal.util.ColorUtils;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -67,38 +68,32 @@ public class CrystallineSolutionRecipe extends SpecialCraftingRecipe {
 				ItemStack itemStack = input.getStackInSlot(i);
 				if (!itemStack.isEmpty()) {
 					if (LIGHT_MODIFIER.test(itemStack)) {
-						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is glowstone", i));
 						if (lightModifiers > 4) {
 							return false;
 						}
 						lightModifiers += 1;
 					} else if (REDSTONE_MODIFIER.test(itemStack)) {
-						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is redstone", i));
 						if (redstoneModifiers > 4) {
 							return false;
 						}
 						redstoneModifiers += 1;
 					} else if (FOOD_MODIFIER.test(itemStack)) {
-						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is sugar", i));
 						if (foodModifiers > 4) {
 							return false;
 						}
 						foodModifiers += 1;
 					} else if (itemStack.getItem() instanceof DyeItem) {
-						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is a dye", i));
 						if (colorModifiers > 1) {
 							return false;
 						}
 						colorModifiers += 1;
 					} else if (CRYSTAL_BASE_INGREDIENT.test(itemStack)){
-						GrowYourCrystal.LOGGER.info(String.format("item in slot %d is a crystal base", i));
 						if (hasCrystalBase) {
 							return false;
 						}
 						hasCrystalBase = true;
 					} else {
 						if (CRYSTAL_GROWING_TOOLKIT.test(itemStack)) {
-							GrowYourCrystal.LOGGER.info(String.format("item in slot %d is the toolkit", i));
 							if (hasToolkit) {
 								return false ;
 							}
@@ -139,7 +134,7 @@ public class CrystallineSolutionRecipe extends SpecialCraftingRecipe {
 			}
 		}
 
-		int colorMix = mixColors(colors);
+		int colorMix = ColorUtils.mixColors(colors);
 
 		ItemStack itemStack = crystalType == (CRYSTAL_TYPE.NORMAL) ? new ItemStack(ModItems.CRYSTALLINE_SOLUTION) : new ItemStack(ModItems.CREATIVE_SOLUTION);
 		itemStack.set(ModComponents.CRYSTAL_ITEM_COMPONENT, new CrystalItemComponent(
@@ -148,35 +143,6 @@ public class CrystallineSolutionRecipe extends SpecialCraftingRecipe {
 			redstoneModifiers,
 			foodModifiers));
 		return itemStack;
-	}
-
-	private static int mixColors(List<Integer> colors) {
-		int redSum = 0;
-		int greenSum = 0;
-		int blueSum = 0;
-		int lightness = 0;
-		int colorCount = 0;
-		for (Integer color : colors) {
-			int red = ColorHelper.getRed(color);
-			int green = ColorHelper.getGreen(color);
-			int blue = ColorHelper.getBlue(color);
-			lightness += Math.max(red, Math.max(green, blue));
-			redSum += red;
-			greenSum += green;
-			blueSum += blue;
-			colorCount++;
-		}
-
-		int redResult = redSum / colorCount;
-		int greenResult = greenSum / colorCount;
-		int blueResult = blueSum / colorCount;
-		float lightnessResult = (float)lightness / colorCount;
-		float g = Math.max(redResult, Math.max(greenResult, blueResult));
-		redResult = (int)(redResult * lightnessResult / g);
-		greenResult = (int)(greenResult * lightnessResult / g);
-		blueResult = (int)(blueResult * lightnessResult / g);
-		int colorResult = ColorHelper.getArgb(0, redResult, greenResult, blueResult);
-		return colorResult;
 	}
 
 	@Override

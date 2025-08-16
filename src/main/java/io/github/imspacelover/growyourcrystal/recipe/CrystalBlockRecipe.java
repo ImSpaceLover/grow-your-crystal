@@ -1,13 +1,10 @@
 package io.github.imspacelover.growyourcrystal.recipe;
 
 import io.github.imspacelover.growyourcrystal.block.ModBlocks;
-import io.github.imspacelover.growyourcrystal.item.ModItems;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.recipe.input.SingleStackRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 
@@ -25,13 +22,13 @@ public class CrystalBlockRecipe extends SpecialCraftingRecipe {
 		RawShapedRecipe recipe = RawShapedRecipe.create(
 			Map.of('#', Ingredient.ofItem(ModBlocks.CRYSTAL_CLUSTER_BLOCK)),
 			"##",
-			"##");
+					"##");
 		return recipe.matches(input);
 	}
 
 	@Override
 	public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup registries) {
-		return input.getStackInSlot(0).copyComponentsToNewStack(ModBlocks.CRYSTAL_BLOCK.asItem(), 1);
+		return input.getStackInSlot(0).copyComponentsToNewStack(ModBlocks.CRYSTAL_BLOCK.asItem(), 4);
 	}
 
 	@Override

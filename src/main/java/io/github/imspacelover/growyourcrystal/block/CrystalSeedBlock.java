@@ -70,7 +70,7 @@ public class CrystalSeedBlock extends Block implements BlockEntityProvider, Wate
 		);
 
 	public static final int GROWTH_TICKS = 5000;
-	public static final int GROWTH_TICKS_CREATIVE = 20;
+	public static final int GROWTH_TICKS_CREATIVE = 5;
 	public CrystalSeedBlock(Settings settings) {
 		super(settings);
 		setDefaultState(getDefaultState().with(AGE, 0).with(LIGHT_LEVEL, 0));

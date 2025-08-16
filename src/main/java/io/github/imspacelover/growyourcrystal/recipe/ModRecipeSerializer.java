@@ -23,6 +23,6 @@ public interface ModRecipeSerializer<T extends Recipe<?>> {
 	}
 
 	static void initialize() {
-		GrowYourCrystal.LOGGER.info("Registering {} recipies", GrowYourCrystal.ID);
+//		GrowYourCrystal.LOGGER.info("Registering {} recipies", GrowYourCrystal.ID);
 	}
 }

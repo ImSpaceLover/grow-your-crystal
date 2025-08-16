@@ -6,6 +6,7 @@ import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import io.github.imspacelover.growyourcrystal.item.ModItems;
 import io.github.imspacelover.growyourcrystal.recipe.ModRecipeSerializer;
 import io.github.imspacelover.growyourcrystal.tooltip.ModComponentTooltips;
+import io.github.imspacelover.growyourcrystal.util.ModLootTableModifier;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,5 +27,6 @@ public class GrowYourCrystal implements ModInitializer {
 		ModBlocks.initialize();
 
 		ModRecipeSerializer.initialize();
+		ModLootTableModifier.modifyLootTables();
 	}
 }
