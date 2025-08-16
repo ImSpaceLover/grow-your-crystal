@@ -20,14 +20,18 @@ Grow your own crystals with customizable colors, where each crystal can have up 
 <center><img src="images/crystal_seed_recipe.png"></center>
 <center>Crystal seed recipe (the toolkit is not fully consumed after crafting and can be used again)</center>
 
+
 <center><img src="images/crystalline_solution_recipe.png"></center>
 <center>Crystalline solution recipe example (remember, you can mix colors as well as add different powders for special properties)</center>
+
 
 <center><img src="images/crystal_seed_in_water.png"></center>
 <center>A crystal seed submerged into water </center>
 
+
 <center><img src="images/crystal_seed_fully_grown.png"></center>
 <center>A fully grown crystal seed (might not have been the best place  </center>
+
 
 <center><img src="images/crystal_patterns_examples.png"></center>
 <center>These are just some of the patterns. Remember - the possibilities are endless!</center>
