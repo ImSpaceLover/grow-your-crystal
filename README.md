@@ -30,7 +30,7 @@ Grow your own crystals with customizable colors, where each crystal can have up 
 
 
 <center><img src="images/crystal_seed_fully_grown.png"></center>
-<center>A fully grown crystal seed (might not have been the best place  </center>
+<center>A fully grown crystal seed  </center>
 
 
 <center><img src="images/crystal_patterns_examples.png"></center>
