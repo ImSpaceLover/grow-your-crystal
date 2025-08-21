@@ -8,6 +8,8 @@ import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.util.ColorUtils;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 
+import java.util.List;
+
 public class ModColorProviders {
 	public static void register() {
 		ColorProviderRegistry.BLOCK.register(
@@ -28,9 +30,9 @@ public class ModColorProviders {
 		ColorProviderRegistry.BLOCK.register(
 			(state, view, pos, tintIndex) -> {
 				if (view != null && pos != null && view.getBlockEntity(pos) instanceof CrystalBlockEntity blockEntity) {
-					if (blockEntity.crystalComponent.colors() != null && blockEntity.crystalComponent.colors().size() <= tintIndex) {
+					if (blockEntity.crystalComponent == null || blockEntity.crystalComponent.colors().size() <= tintIndex) {
 						return ColorUtils.DEFAULT_COLOR;
-					}	else {
+					} else {
 						int color = blockEntity.crystalComponent.colors().get(tintIndex);
 						return ColorUtils.getTweakedColor(color);
 					}

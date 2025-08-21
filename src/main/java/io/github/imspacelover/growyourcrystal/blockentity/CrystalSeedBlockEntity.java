@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 public class CrystalSeedBlockEntity extends BlockEntity {
 	public static final int MAX_LAYERS = 3;
-	public CrystalItemComponent crystalComponent = CrystalItemComponent.DEFAULT;
+	public CrystalItemComponent crystalComponent = CrystalItemComponent.DEFAULT_BLOCK;
 	public boolean growing = false;
 
 	public CrystalSeedBlockEntity(BlockPos pos, BlockState state) {
@@ -54,7 +54,7 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 	protected void writeData(WriteView view) {
 		super.writeData(view);
 		if (!crystalComponent.equals(CrystalItemComponent.DEFAULT)) {
-			view.put("crystal_component", CrystalItemComponent.CODEC, Optional.of(crystalComponent).orElse(CrystalItemComponent.DEFAULT));
+			view.put("crystal_component", CrystalItemComponent.CODEC, Optional.of(crystalComponent).orElse(CrystalItemComponent.DEFAULT_BLOCK));
 		}
 		view.putBoolean("growing", growing);
 	}
@@ -62,7 +62,7 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 	@Override
 	protected void readData(ReadView view) {
 		super.readData(view);
-		this.crystalComponent = view.read("crystal_component", CrystalItemComponent.CODEC).orElse(CrystalItemComponent.DEFAULT);
+		this.crystalComponent = view.read("crystal_component", CrystalItemComponent.CODEC).orElse(CrystalItemComponent.DEFAULT_BLOCK);
 		this.growing = view.getBoolean("growing", false);
 		if (world != null) {
 			world.updateListeners(pos, getCachedState(), getCachedState(), 0);

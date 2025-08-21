@@ -28,7 +28,7 @@ import java.util.Optional;
 public class CrystalBlockEntity extends BlockEntity {
 	public static final int MAX_LAYERS = 3;
 
-	public CrystalItemComponent crystalComponent = CrystalItemComponent.DEFAULT;
+	public CrystalItemComponent crystalComponent = CrystalItemComponent.DEFAULT_BLOCK;
 
 	public CrystalBlockEntity(BlockPos pos, BlockState state) {
 		super(ModBlockEntities.CRYSTAL_BLOCK, pos, state);
@@ -41,15 +41,15 @@ public class CrystalBlockEntity extends BlockEntity {
 	@Override
 	protected void writeData(WriteView view) {
 		super.writeData(view);
-		if (this.crystalComponent != null && !crystalComponent.equals(CrystalItemComponent.DEFAULT)) {
-			view.put("crystal_component", CrystalItemComponent.CODEC, Optional.of(crystalComponent).orElse(CrystalItemComponent.DEFAULT));
+		if (this.crystalComponent != null && !crystalComponent.equals(CrystalItemComponent.DEFAULT_BLOCK)) {
+			view.put("crystal_component", CrystalItemComponent.CODEC, Optional.of(crystalComponent).orElse(CrystalItemComponent.DEFAULT_BLOCK));
 		}
 	}
 
 	@Override
 	protected void readData(ReadView view) {
 		super.readData(view);
-		this.crystalComponent = view.read("crystal_component", CrystalItemComponent.CODEC).orElse(CrystalItemComponent.DEFAULT);
+		this.crystalComponent = view.read("crystal_component", CrystalItemComponent.CODEC).orElse(CrystalItemComponent.DEFAULT_BLOCK);
 		if (world != null) {
 			world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 		}
@@ -57,15 +57,15 @@ public class CrystalBlockEntity extends BlockEntity {
 
 	public ItemStack getStackWith(Block block) {
 		ItemStack stack = block.asItem().getDefaultStack();
-		stack.set(ModComponents.CRYSTAL_ITEM_COMPONENT, crystalComponent);
-		stack.set(DataComponentTypes.FOOD, this.crystalComponent.getFoodComponent());
+		stack.set(ModComponents.CRYSTAL_ITEM_COMPONENT, Optional.of(this.crystalComponent).orElse(CrystalItemComponent.DEFAULT_BLOCK));
+		stack.set(DataComponentTypes.FOOD, Optional.of(this.crystalComponent.getFoodComponent()).orElse(CrystalItemComponent.DEFAULT_FOOD));
 		return stack;
 	}
 
 	@Override
 	protected void addComponents(ComponentMap.Builder builder) {
 		super.addComponents(builder);
-		builder.add(ModComponents.CRYSTAL_ITEM_COMPONENT, this.crystalComponent);
+		builder.add(ModComponents.CRYSTAL_ITEM_COMPONENT, Optional.of(this.crystalComponent).orElse(CrystalItemComponent.DEFAULT_BLOCK));
 		builder.add(DataComponentTypes.FOOD, this.crystalComponent.getFoodComponent());
 	}
 
@@ -73,7 +73,7 @@ public class CrystalBlockEntity extends BlockEntity {
 	@Override
 	protected void readComponents(ComponentsAccess components) {
 		super.readComponents(components);
-		this.crystalComponent = components.get(ModComponents.CRYSTAL_ITEM_COMPONENT);
+		this.crystalComponent = components.getOrDefault(ModComponents.CRYSTAL_ITEM_COMPONENT, CrystalItemComponent.DEFAULT_BLOCK);
 	}
 
 	public void setCrystalComponent(CrystalItemComponent component) {

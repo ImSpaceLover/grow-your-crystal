@@ -24,6 +24,8 @@ public record CrystalItemComponent(List<Integer> colors, int lightLevel, int red
 	public static final FoodComponent DEFAULT_FOOD = new FoodComponent(0, 0, false);
 
 	public static final CrystalItemComponent DEFAULT = new CrystalItemComponent(new ArrayList<>(), 0, 0,  0);
+	public static final CrystalItemComponent DEFAULT_BLOCK = new CrystalItemComponent(List.of(ColorUtils.DEFAULT_COLOR, ColorUtils.DEFAULT_COLOR, ColorUtils.DEFAULT_COLOR), 0, 0,  0);
+
 
 	public static final Codec<CrystalItemComponent> CODEC = RecordCodecBuilder.create(builder -> {
 		return builder.group(
