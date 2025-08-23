@@ -14,7 +14,7 @@ public class ModBlockEntities {
 
 	public static final BlockEntityType<CrystalBlockEntity> CRYSTAL_BLOCK = register("crystal_blockentity", CrystalBlockEntity::new, ModBlocks.CRYSTAL_BLOCK, ModBlocks.CRYSTAL_CLUSTER_BLOCK);
 
-	public static final BlockEntityType<CrystalSeedBlockEntity> CRYSTAL_SEED = register("crystal_seed", CrystalSeedBlockEntity::new, ModBlocks.CRYSTAL_SEED_BLOCK);
+	public static final BlockEntityType<CrystalSeedBlockEntity> CRYSTAL_SEED = register("crystal_seed", CrystalSeedBlockEntity::new, ModBlocks.CRYSTAL_SEED_BLOCK, ModBlocks.CREATIVE_SEED_BLOCK);
 
 		public static <T extends BlockEntity>BlockEntityType<T> register(
 		String name,

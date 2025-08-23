@@ -5,10 +5,13 @@
 	"item.grow_your_crystal.creative_solution": "Creative Solution",
 	"item.grow_your_crystal.creative_crystal": "Creative Crystal",
 
+	"item.grow_your_crystal.creative_seed": "Creative Seed",
 	"item.grow_your_crystal.crystal_seed": "Crystal Seed",
 	"item.grow_your_crystal.crystal_block": "Crystal Block",
 	"item.grow_your_crystal.crystal_cluster": "Crystal Cluster",
 
+	"block.grow_your_crystal.crystal_cluster":  "Crystal Cluster",
+	"block.grow_your_crystal.creative_seed":  "Creative Seed",
 	"block.grow_your_crystal.crystal_seed":  "Crystal Seed",
 	"block.grow_your_crystal.crystal_block":  "Crystal Block",
 

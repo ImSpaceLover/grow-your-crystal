@@ -15,13 +15,14 @@ public class GrowYourCrystalClient implements ClientModInitializer {
 	public void onInitializeClient() {
 
 		TintSourceTypes.ID_MAPPER.put(Identifier.of(GrowYourCrystal.ID, "crystal_color"), CrystalTintSource.CODEC);
-//		TintSourceTypes.ID_MAPPER.put(Identifier.of(GrowYourCrystal.ID, "crystal_color"), CrystalTintSource.CODEC);
-//		TintSourceTypes.ID_MAPPER.put(Identifier.of(GrowYourCrystal.ID, "crystal_color_1"), CrystalTintSource.CODEC);
 
 
 		ModColorProviders.register();
-		BlockRenderLayerMap.putBlock(ModBlocks.CRYSTAL_SEED_BLOCK, BlockRenderLayer.CUTOUT);
-		BlockRenderLayerMap.putBlock(ModBlocks.CRYSTAL_BLOCK, BlockRenderLayer.CUTOUT_MIPPED);
-		BlockRenderLayerMap.putBlock(ModBlocks.CRYSTAL_CLUSTER_BLOCK, BlockRenderLayer.CUTOUT_MIPPED);
+		BlockRenderLayerMap.putBlocks(BlockRenderLayer.CUTOUT,
+			ModBlocks.CRYSTAL_SEED_BLOCK,
+			ModBlocks.CREATIVE_SEED_BLOCK);
+		BlockRenderLayerMap.putBlocks(BlockRenderLayer.CUTOUT_MIPPED,
+			ModBlocks.CRYSTAL_BLOCK,
+			ModBlocks.CRYSTAL_CLUSTER_BLOCK);
 	}
 }

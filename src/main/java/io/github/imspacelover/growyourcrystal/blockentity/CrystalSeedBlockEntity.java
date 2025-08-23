@@ -4,8 +4,6 @@ import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-
-import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -19,8 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class CrystalSeedBlockEntity extends BlockEntity {
 	public static final int MAX_LAYERS = 3;
@@ -35,20 +33,24 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 		ItemStack stack = itemEntity.getStack();
 		CrystalItemComponent component = stack.get(ModComponents.CRYSTAL_ITEM_COMPONENT);
 
-		assert component != null;
-		addComponent(component, layer);
+		if (component != null) {
+			addComponent(component, layer);
+		}
 		growing = true;
 
 		markDirty(world, pos, state);
 	}
 
 	public void addComponent(CrystalItemComponent component, int layer) {
+		List<Integer> colors = new java.util.ArrayList<>(List.copyOf(this.crystalComponent.colors()));
+		colors.set(layer, component.colors().getFirst());
 		crystalComponent = new CrystalItemComponent(
-			Stream.concat(crystalComponent.colors().stream(), component.colors().stream()).limit(MAX_LAYERS).toList(),
+			colors,
 			Math.min(crystalComponent.lightLevel() + component.lightLevel(), 15),
 			Math.min(crystalComponent.redstoneStrength() + component.redstoneStrength(), 15),
 			crystalComponent.foodNutrition() + component.foodNutrition());
 	}
+
 
 	@Override
 	protected void writeData(WriteView view) {

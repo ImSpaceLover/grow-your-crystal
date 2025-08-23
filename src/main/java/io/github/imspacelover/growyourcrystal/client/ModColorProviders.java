@@ -1,14 +1,10 @@
 package io.github.imspacelover.growyourcrystal.client;
 
-import io.github.imspacelover.growyourcrystal.GrowYourCrystal;
 import io.github.imspacelover.growyourcrystal.block.ModBlocks;
 import io.github.imspacelover.growyourcrystal.blockentity.CrystalBlockEntity;
 import io.github.imspacelover.growyourcrystal.blockentity.CrystalSeedBlockEntity;
-import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.util.ColorUtils;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-
-import java.util.List;
 
 public class ModColorProviders {
 	public static void register() {
@@ -25,7 +21,8 @@ public class ModColorProviders {
 					return ColorUtils.DEFAULT_COLOR;
 				}
 			},
-			ModBlocks.CRYSTAL_SEED_BLOCK);
+			ModBlocks.CRYSTAL_SEED_BLOCK,
+			ModBlocks.CREATIVE_SEED_BLOCK);
 
 		ColorProviderRegistry.BLOCK.register(
 			(state, view, pos, tintIndex) -> {
