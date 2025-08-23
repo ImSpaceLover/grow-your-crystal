@@ -1,7 +1,9 @@
 package io.github.imspacelover.growyourcrystal.blockentity;
 
+import io.github.imspacelover.growyourcrystal.block.ModBlocks;
 import io.github.imspacelover.growyourcrystal.component.CrystalItemComponent;
 import io.github.imspacelover.growyourcrystal.component.ModComponents;
+import io.github.imspacelover.growyourcrystal.util.ColorUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
@@ -43,6 +45,9 @@ public class CrystalSeedBlockEntity extends BlockEntity {
 
 	public void addComponent(CrystalItemComponent component, int layer) {
 		List<Integer> colors = new java.util.ArrayList<>(List.copyOf(this.crystalComponent.colors()));
+		while (colors.size() < MAX_LAYERS) {
+			colors.add(ColorUtils.DEFAULT_COLOR);
+		}
 		colors.set(layer, component.colors().getFirst());
 		crystalComponent = new CrystalItemComponent(
 			colors,
