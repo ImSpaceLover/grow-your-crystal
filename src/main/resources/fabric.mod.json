@@ -16,7 +16,7 @@
 		"sources": "${sources}"
 	},
 	"license": "${license}",
-	"icon": "assets/grow_your_crystal/icon.png",
+	"icon": "icon.png",
 	"mixins": [
 		"grow_your_crystal.mixins.json"
 	],
