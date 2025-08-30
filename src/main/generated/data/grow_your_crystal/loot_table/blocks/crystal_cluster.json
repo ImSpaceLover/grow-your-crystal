@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity"
+            },
+            {
+              "block": "grow_your_crystal:crystal_cluster",
+              "function": "minecraft:copy_state",
+              "properties": [
+                "light",
+                "emits_redstone"
+              ]
+            }
+          ],
+          "name": "grow_your_crystal:crystal_cluster"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
